@@ -36,20 +36,35 @@ router.get("/board/:postNum", async (req, res) => { // 게시글 상세 조회 A
     const [posting] = await Board.find({ postNum: Number(postNum) });
 
     res.json({ //json형식으로 상세 조회 응답
-        posting, //detail이라는 Key에 json 데이터를 넣어서 응답을 준다.
+        posting, //posting이라는 Key에 json 데이터를 넣어서 응답을 준다.
     });
-})
-
-router.put("board/:postId", async (req, res) => { // 게시글 수정 API
-
-
-});
-
-router.delete("board/:postId", async (req, res) => { // 게시글 삭제 API
-
-
 });
 
 
+// router.put("/board/:postNum", async (req, res) => { // 게시글 수정 API
+//     const { postNum } = req.params
+//     const { password, title, content, } = req.body;
+
+//     const existsPost = await Board.find({ postNum: Number(postNum), password });
+//     if (existsPost > 0) {
+//         return res.status(400).json({ success: false, errorMessage: "비밀번호를 재확인해주세요." });
+//     } else {
+//         await Board.updateOne({ postNum: Number(postNum) }, { $set: { title } }, { $set: { content } });
+//     }
+//     res.json({ success: true })
+
+// });
+
+router.delete("/board/:postNum", async (req, res) => { // 게시글 삭제 API
+    const { postNum } = req.params;
+    const { password } = req.body;
+    const correctPw = await Board.findOne({ postNum })
+    if (password == correctPw.password){
+        const deleteBoard = await Board.deleteOne({ postNum : Number(postNum)});
+        res.json({ board: deleteBoard })
+    }else{
+        return res.status(400).json({ success: false, errorMessage: "비밀번호 재확인." });
+};
+});
 
 module.exports = router; // app.js의 require()로 리턴. module.exports는 꼭 있어야함.
