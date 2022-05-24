@@ -5,14 +5,14 @@ const router = express.Router();
 router.get("/", (req, res) => {
     res.json({ success: true, call: "메인페이지입니다." })
 });
-
+// /board?sortby=postDate&orderby=desc
 router.get("/board", async (req, res) => { // 게시글 전체목록 조회 API 
     //get Method를 가진 board URL을 가진 json 데이터로 내보내는 API
     const { postDate } = req.query;
 
-    const board = await Board.find({ postDate }); //Boards라는 스키마에서 find
+    const board = await Board.find({ postDate }); //Board라는 스키마에서 find
     res.json({ //json형식으로 응답
-        boards: board//원래는 goods:goods로 작성되어야한다. 그러나 key와 value가 같다면 약식이 가능하다. (객체 초기자)
+        boards: board//원래는 json 형식으로 board:board 로 작성되어야한다. 그러나 key와 value가 같다면 약식이 가능하다. (객체 초기자)
     });
 });
 
@@ -33,38 +33,36 @@ router.post("/board", async (req, res) => { // 게시글 작성 API //postingId�
 router.get("/board/:postNum", async (req, res) => { // 게시글 상세 조회 API
     const { postNum } = req.params;
 
-    const [posting] = await Board.find({ postNum: Number(postNum) });
+    const [detail] = await Board.find({ postNum: Number(postNum) });
 
     res.json({ //json형식으로 상세 조회 응답
-        posting, //posting이라는 Key에 json 데이터를 넣어서 응답을 준다.
+        detail, // detail이라는 Key에 json 데이터를 넣어서 응답을 준다.
     });
 });
 
 
-// router.put("/board/:postNum", async (req, res) => { // 게시글 수정 API
-//     const { postNum } = req.params
-//     const { password, title, content, } = req.body;
+router.put("/board/:postNum", async (req, res) => { // 게시글 수정 API 비밀번호 대조
+    const { postNum } = req.params;
+    const { password, title, content } = req.body;
+    const correctPw = await Board.findOne({ postNum })
+    if (password == correctPw.password) {
+        const updateBoard = await Board.updateOne({ postNum: Number(postNum) }, { $set: { title }, $set:{ content } });
+        res.json({ board: updateBoard })
+    } else {
+        return res.status(401).json({ success: false, errorMessage: "비밀번호 재확인." });
+    };
+});
 
-//     const existsPost = await Board.find({ postNum: Number(postNum), password });
-//     if (existsPost > 0) {
-//         return res.status(400).json({ success: false, errorMessage: "비밀번호를 재확인해주세요." });
-//     } else {
-//         await Board.updateOne({ postNum: Number(postNum) }, { $set: { title } }, { $set: { content } });
-//     }
-//     res.json({ success: true })
-
-// });
-
-router.delete("/board/:postNum", async (req, res) => { // 게시글 삭제 API
+router.delete("/board/:postNum", async (req, res) => { // 게시글 삭제 API 비밀번호 대조
     const { postNum } = req.params;
     const { password } = req.body;
     const correctPw = await Board.findOne({ postNum })
-    if (password == correctPw.password){
-        const deleteBoard = await Board.deleteOne({ postNum : Number(postNum)});
+    if (password == correctPw.password) {
+        const deleteBoard = await Board.deleteOne({ postNum: Number(postNum) });
         res.json({ board: deleteBoard })
-    }else{
-        return res.status(400).json({ success: false, errorMessage: "비밀번호 재확인." });
-};
+    } else {
+        return res.status(401).json({ success: false, errorMessage: "비밀번호 재확인." });
+    };
 });
 
 module.exports = router; // app.js의 require()로 리턴. module.exports는 꼭 있어야함.
