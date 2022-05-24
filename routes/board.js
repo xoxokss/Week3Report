@@ -11,7 +11,7 @@ router.get("/board", async (req, res) => { // 게시글 전체목록 조회 API
     const { postDate } = req.query;
 
     const board = await Board.find({ postDate }).sort({postDate:-1}); //Board라는 스키마에서 find, sort()날짜기준 내림차순 
-    res.json({ //json형식으로 응답
+    res.status(200).json({ //json형식으로 응답
         boards: board//원래는 json 형식으로 board:board 로 작성되어야한다. 그러나 key와 value가 같다면 약식이 가능하다. (객체 초기자)
     });
 });
@@ -27,7 +27,7 @@ router.post("/board", async (req, res) => { // 게시글 작성 API
 
     const createBoard = await Board.create({ userName, password, title, content, postDate });
 
-    res.json({ board: createBoard });
+    res.status(201).json({ board: createBoard });
 });
 
 
@@ -36,7 +36,7 @@ router.get("/board/:postId", async (req, res) => { // 게시글 상세 조회 AP
 
     const [detail] = await Board.find({ postId: Number(postId) });
 
-    res.json({ //json형식으로 상세 조회 응답
+    res.status(200).json({ //json형식으로 상세 조회 응답
         detail, // detail이라는 Key에 json 데이터를 넣어서 응답을 준다.
     });
 });
@@ -47,8 +47,8 @@ router.put("/board/:postId", async (req, res) => { // 게시글 수정 API
     const { password, title, content } = req.body;
     const correctPw = await Board.findOne({ postId })
     if (password == correctPw.password) {
-        const updateBoard = await Board.updateOne({ postId: Number(postId) }, { $set: { title }, $set:{ content } });
-        res.json({ board: updateBoard })
+        const updateBoard = await Board.updateOne({ postId: Number(postId) }, { $set: { title , content} });
+        res.status(201).json({ board: updateBoard })
     } else {
         return res.status(401).json({ success: false, errorMessage: "비밀번호 재확인." });
     };
@@ -60,7 +60,7 @@ router.delete("/board/:postId", async (req, res) => { // 게시글 삭제 API
     const correctPw = await Board.findOne({ postId })
     if (password == correctPw.password) {
         const deleteBoard = await Board.deleteOne({ postId: Number(postId) });
-        res.json({ board: deleteBoard })
+        res.status(200).json({ board: deleteBoard })
     } else {
         return res.status(401).json({ success: false, errorMessage: "비밀번호 재확인." });
     };
