@@ -1,12 +1,7 @@
 const mongoose = require("mongoose");
-
+const AutoIncrement = require("mongoose-sequence")(mongoose);
 
 const boardSchema = new mongoose.Schema({
-    postNum : {
-        type : Number,
-        // required : true,
-        // unique : true
-    },
     userName : {
         type : String,
         // required : true,
@@ -27,4 +22,5 @@ const boardSchema = new mongoose.Schema({
     }
 });
 
+boardSchema.plugin(AutoIncrement, {inc_field:'postId'});
 module.exports = mongoose.model("Board", boardSchema);
