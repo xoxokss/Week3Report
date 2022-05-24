@@ -1,29 +1,30 @@
 const mongoose = require("mongoose");
 
-const boardsSchema = mongoose.Schema({
-    postId : {
+
+const boardSchema = new mongoose.Schema({
+    postNum : {
         type : Number,
-        required : true,
-        unique : true
+        // required : true,
+        // unique : true
     },
     userName : {
         type : String,
-        required : true,
-        unique : true
+        // required : true,
+        // unique : true
     },
     password : {
         type : String
     },
-    postingTitle : {
+    title : {
         type : String
+    },
+    postDate: {
+        type : String //이거 굳이 Date로 안받아도 될거같은데? 날짜순으로 DB에 넣어야합니다.
+        // new Date().toString() 이거 어디에 넣지
     },
     content : {
         type : String
-    },
-    postingTime : {
-        type : String
-        // date : new Date().toString() 에러가 나네
-    },
+    }
 });
 
-module.exports = mongoose.model("Board", boardsSchema);
+module.exports = mongoose.model("Board", boardSchema);

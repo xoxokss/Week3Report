@@ -20,7 +20,7 @@ app.use(express.urlencoded()); // url 인코더 미들웨어 실행
 
 app.use(requestMiddleware); // 요청 URL과 시간 미들웨어 실행
 
-app.use("/api", [boardRouter]); // /api라는 주소url 요청시 라우터 미들웨어 실행. routes/goods.js에 있는 라우터 미들웨어를 통해 처리된다.
+app.use("/api", [boardRouter]); // /api라는 주소url 요청시 라우터 미들웨어 실행. routes/board.js에 있는 라우터 미들웨어를 통해 처리된다.
 
 app.get('/', (req, res) => { //루트 디렉토리
   res.send('Hello World!@@@');
