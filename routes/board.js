@@ -5,7 +5,7 @@ const router = express.Router();
 router.get("/", (req, res) => {
     res.json({ success: true, call: "메인페이지입니다." })
 });
-// /board?sortby=postDate&orderby=desc
+
 router.get("/board", async (req, res) => { // 게시글 전체목록 조회 API 
     //get Method를 가진 board URL을 가진 json 데이터로 내보내는 API
     const { postDate } = req.query;
@@ -17,7 +17,7 @@ router.get("/board", async (req, res) => { // 게시글 전체목록 조회 API
 });
 
 router.post("/board", async (req, res) => { // 게시글 작성 API
-    const { userName, password, title, content, postDate } = req.body; // 바디 정보가져옴
+    const { userName, password, title, content, postDate } = req.body; // body 정보가져옴
 
     // 자동으로 postId를 넣는 라이브러리 설치 후 중복확인 절차 제거
     // isExist = await Board.find({ postId });
