@@ -6,16 +6,16 @@ const User = require('../models/user')
 
 const router = express.Router();
 
-const postUsersSchema = Joi.object({
-    nickname: Joi.string().required().alphanum().min(3),
-    password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{4,30}$')),
-    confirmPassword: Joi.ref('password')
-});
 
 router.get("/login", (req, res) => {
     res.json({ success: true, call: "로그인 페이지입니다." })
 });
 
+const postUsersSchema = Joi.object({
+    nickname: Joi.string().required().alphanum().min(3),
+    password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{4,30}$')),
+    confirmPassword : Joi.string()
+});
 
 //회원가입 API
 router.post("/users", async (req, res) => {
@@ -56,10 +56,12 @@ router.post("/users", async (req, res) => {
         });
     }
 });
+
+
 //로그인 API
 router.post("/login", async (req, res) => {
     try {
-      const { nickname, password } = await postAuthSchema.validateAsync(req.body);
+      const { nickname, password } = await postUsersSchema.validateAsync(req.body);
   
       const user = await User.findOne({ nickname, password });
   
